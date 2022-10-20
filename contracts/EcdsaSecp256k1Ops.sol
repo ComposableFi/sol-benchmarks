@@ -33,10 +33,11 @@ contract EcdsaSecp256k1Ops {
     function checkSignatures(
         bytes[] calldata signatures,
         address[] calldata addresses,
-        bytes32 message
+        string calldata message
     ) public pure returns (uint256) {
         uint256 correctSignatures = 0;
-        bytes32 messageHash = message.toEthSignedMessageHash();
+        bytes32 msgHash = keccak256(abi.encode(message));
+        bytes32 messageHash = msgHash.toEthSignedMessageHash();
         for (uint256 i = 0; i < addresses.length; i++) {
             address recoveredAddress = ECDSA.recover(
                 messageHash,

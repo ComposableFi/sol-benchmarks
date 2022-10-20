@@ -1,17 +1,18 @@
 const ops = artifacts.require("EcdsaSecp256k1Ops");
 const { ethers } = require("ethers");
 const jsrsasign = require("jsrsasign");
-const addresses = require("../addresses.json");
-const signatures = require("../signatures.json");
+// const addresses = require("../addresses.json");
+// const signatures = require("../signatures.json");
 const fs = require("fs");
+const { assert } = require("console");
 
 contract("ops", (accounts) => {
-  const alg = "SHA256withECDSA";
+  // const alg = "SHA256withECDSA";
   const msg = "bridging is tough";
-  const curve = "secp256k1";
-  const charlen = 256;
+  // const curve = "secp256k1";
+  // const charlen = 256;
 
-  const ec = new jsrsasign.KJUR.crypto.ECDSA({ curve: curve });
+  // const ec = new jsrsasign.KJUR.crypto.ECDSA({ curve: curve });
   // const sig = new jsrsasign.KJUR.crypto.Signature({ alg: alg });
   // sig.init({ d: keypair.ecprvhex, curve: curve });
   // sig.updateString(msg);
@@ -38,17 +39,29 @@ contract("ops", (accounts) => {
   //     var result = await opsContract.verify(msg, sigHex, accounts[0]);
   //     console.log(result);
   //   });
-  it("recover addresses", async () => {
-    // const addresses = [];
-    // const signatures = [];
-    const msgHash = ethers.utils.keccak256(
-      ethers.utils.defaultAbiCoder.encode(["string"], [msg])
-    );
-    console.log(msgHash);
+  it("recovers all addresses from signature and msg", async () => {
+    const addresses = [];
+    const signatures = [];
+    const NUMBER = 2290;
+    for (let i = 0; i < NUMBER; i++) {
+      const signer = ethers.Wallet.createRandom();
+      const signature = await signer.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+          )
+        )
+      );
+      const address = await signer.getAddress();
+      console.log(address);
+      console.log(signature);
+      addresses.push(address);
+      signatures.push(signature);
+    }
     const result = await opsContract.checkSignatures.estimateGas(
-      signatures.slice(0, 1000),
-      addresses.slice(0, 1000),
-      msgHash
+      signatures,
+      addresses,
+      msg
     );
     console.log(result.toString());
   });
