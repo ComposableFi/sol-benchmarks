@@ -9,7 +9,9 @@
   "author": "Nadeem Bhati",
   "license": "ISC",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
     "elliptic-curve-solidity": "^0.2.4",
+    "ethers": "^5.7.2",
     "jsrsasign": "^10.5.27"
   }
 }
