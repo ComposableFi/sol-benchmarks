@@ -6,16 +6,18 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract EcdsaOps {
     using ECDSA for bytes32;
+    event Verify(uint256 correctSignatures);
 
     function checkSignatures(
         bytes[] calldata signatures,
         address[] calldata addresses,
         string calldata message
-    ) public pure returns (uint256) {
+    ) public {
         uint256 correctSignatures = 0;
         bytes32 msgHash = keccak256(abi.encode(message));
         bytes32 messageHash = msgHash.toEthSignedMessageHash();
-        for (uint256 i = 0; i < addresses.length; i++) {
+        uint256 n = addresses.length;
+        for (uint256 i; i < n; ++i) {
             address recoveredAddress = ECDSA.recover(
                 messageHash,
                 signatures[i]
@@ -24,6 +26,6 @@ contract EcdsaOps {
                 correctSignatures++;
             }
         }
-        return correctSignatures;
+        emit Verify(correctSignatures);
     }
 }
