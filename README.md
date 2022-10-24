@@ -11,3 +11,11 @@ npx hardhat test
 ![TestImage Image](images/test_report.png)
 
 Max signature count is 153, beyond which the transaction gas limit exceeds block gas limit of 30M
+
+## Contract details
+
+### EcdsaOps
+
+> Contract includes encoding and hashing of message string, looping through each signature and recovering each address from the message hash and signature using `ECDSA.recover` function. Finally, an event is emitted with the number of correct matches.
+
+
