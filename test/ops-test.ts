@@ -104,5 +104,28 @@ describe("ECDSAOpsTest", () => {
         .to.emit(opsContract, "Verify")
         .withArgs(NUMBER);
     });
+    it("should recover 155 addresses from signature and msg", async () => {
+      const opsContract = await loadFixture(opsFixture);
+      const addresses = [];
+      const signatures = [];
+      const NUMBER = 155;
+      console.log(NUMBER);
+      for (let i = 0; i < NUMBER; i++) {
+        const signer = ethers.Wallet.createRandom();
+        const signature = await signer.signMessage(
+          ethers.utils.arrayify(
+            ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+            )
+          )
+        );
+        const address = await signer.getAddress();
+        addresses.push(address);
+        signatures.push(signature);
+      }
+      await expect(opsContract.checkSignatures(signatures, addresses, msg))
+        .to.emit(opsContract, "Verify")
+        .withArgs(NUMBER);
+    });
   });
 });

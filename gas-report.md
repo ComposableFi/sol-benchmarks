@@ -1,13 +1,3 @@
-# Benchmarks
-
-```shell
-npx hardhat compile
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-npx hardhat test
-```
-## Gas report
-
 ·--------------------------------|---------------------------|-------------|-----------------------------·
 |      Solc version: 0.8.17      ·  Optimizer enabled: true  ·  Runs: 200  ·  Block limit: 30000000 gas  │
 ·································|···························|·············|······························
@@ -21,5 +11,3 @@ npx hardhat test
 ·································|············|··············|·············|···············|··············
 |  EcdsaOps                      ·         -  ·           -  ·     449473  ·        1.5 %  ·          -  │
 ·--------------------------------|------------|--------------|-------------|---------------|-------------·
-
-Max signature count is 153, beyond which the transaction gas limit exceeds block gas limit of 30M
