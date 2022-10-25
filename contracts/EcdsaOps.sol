@@ -14,8 +14,6 @@ contract EcdsaOps {
         bytes32 messageHash
     ) public {
         uint256 correctSignatures = 0;
-        // bytes32 msgHash = keccak256(abi.encode(message));
-        // bytes32 messageHash = msgHash.toEthSignedMessageHash();
         uint256 n = addresses.length;
         for (uint256 i; i < n; ++i) {
             address recoveredAddress = ECDSA.recover(

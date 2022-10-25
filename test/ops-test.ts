@@ -39,13 +39,6 @@ describe("ECDSAOpsTest", () => {
       )
         .to.emit(opsContract, "Verify")
         .withArgs(NUMBER);
-      // const call = await opsContract.checkSignatures(
-      //   signatures,
-      //   addresses,
-      //   "0x58115cb6135ae9d09153677de96b8e540ad4b2cde5aaafd52afc4141519ceda3"
-      // );
-      // const receipt = await call.wait();
-      // console.log(receipt.events);
     });
     it("should recover 2 addresses from signature and msg", async () => {
       const opsContract = await loadFixture(opsFixture);
