@@ -35,8 +35,8 @@ contract EcdsaOpsTest is Test {
         verify(8000);
     }
 
-    function test9000Address() public {
-        verify(9000);
+    function test8406Address() public {
+        verify(8406);
     }
 
     function verify(uint256 iterations) public {
