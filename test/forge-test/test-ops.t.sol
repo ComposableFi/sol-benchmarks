@@ -6,30 +6,54 @@ import "../../lib/forge-std/src/Test.sol";
 
 contract EcdsaOpsTest is Test {
     BenchEcrecover public ops;
-    uint256 NUMBER = 8000;
 
     function setUp() public virtual {
         ops = new BenchEcrecover();
     }
 
-    function test() public {
-        verify();
+    function test1Address() public {
+        verify(1);
     }
 
-    function verify() public {
+    function test2Address() public {
+        verify(2);
+    }
+
+    function test20Address() public {
+        verify(20);
+    }
+
+    function test200Address() public {
+        verify(200);
+    }
+
+    function test2000Address() public {
+        verify(2000);
+    }
+
+    function test8000Address() public {
+        verify(8000);
+    }
+
+    function test9000Address() public {
+        verify(9000);
+    }
+
+    function verify(uint256 iterations) public {
         bytes32 message = ethMessageHash("TEST");
 
         bytes
             memory sig = hex"bceab59162da5e511fb9c37fda207d443d05e438e5c843c57b2d5628580ce9216ffa0335834d8bb63d86fb42a8dd4d18f41bc3a301546e2c47aa1041c3a1823701";
         address addr = 0x999471bB43B9C9789050386F90C1Ad63DCa89106;
 
-        recover(message, sig, addr);
+        recover(message, sig, addr, iterations);
     }
 
     function recover(
         bytes32 hash,
         bytes memory sig,
-        address addr
+        address addr,
+        uint256 iterations
     ) internal {
         bytes32 r;
         bytes32 s;
@@ -46,8 +70,7 @@ contract EcdsaOpsTest is Test {
         if (v < 27) {
             v += 27;
         }
-
-        ops.benchmarkEcrecover(hash, v, r, s, addr, NUMBER);
+        ops.benchmarkEcrecover(hash, v, r, s, addr, iterations);
     }
 
     /**
