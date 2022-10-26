@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.9;
 
-contract BenchEcrecover {
+contract NoCacheEcrecover {
     event Verify(uint256 correctSignatures);
 
     function benchmarkEcrecover(

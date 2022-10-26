@@ -81,6 +81,8 @@ describe("ECDSAOpsTest", () => {
           )
         );
         const address = await signer.getAddress();
+        // console.log(`${i}` + " address: ", address);
+        // console.log("signature: ", signature);
         addresses.push(address);
         signatures.push(signature);
       }

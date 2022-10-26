@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "../../Contracts/BenchEcrecover.sol";
+import "../../Contracts/NoCacheEcrecover.sol";
 import "../../lib/forge-std/src/Test.sol";
 
 contract EcdsaOpsTest is Test {
-    BenchEcrecover public ops;
+    NoCacheEcrecover public ops;
 
     function setUp() public virtual {
-        ops = new BenchEcrecover();
+        ops = new NoCacheEcrecover();
     }
 
     function test1Address() public {
