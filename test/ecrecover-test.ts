@@ -4,7 +4,7 @@ import { expect } from "chai";
 
 describe("benchmark", () => {
   async function opsFixture() {
-    const Ecrecover = await ethers.getContractFactory("BenchEcrecover");
+    const Ecrecover = await ethers.getContractFactory("NoCacheEcrecover");
     const ecrecover = await Ecrecover.deploy();
     return ecrecover;
   }

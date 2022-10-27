@@ -4,6 +4,11 @@ import "hardhat-gas-reporter";
 // import "@foundry-rs/hardhat-forge";
 
 const config: HardhatUserConfig = {
+  networks: {
+    hardhat: {
+      gas: 3000000,
+    },
+  },
   solidity: {
     version: "0.8.17",
     settings: {

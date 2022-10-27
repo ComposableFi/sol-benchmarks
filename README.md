@@ -7,17 +7,6 @@ npx hardhat run scripts/deploy.ts
 npx hardhat test
 forge test
 ```
-### BenchEcrecover report
-
-![TestImage Image](images/forge-test-report-1.png)
-
-Max signature count is 8406, beyond which the gas limit exceeds 30M
-
-### EcdsaOps report
-
-![HardhatTestImage Image](images/hardhat-test-report-1.png)
-
-Max signature count is 153, beyond which the gas limit exceeds 30M
 
 ## Contract details
 
