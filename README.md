@@ -1,5 +1,13 @@
 # Benchmarks
 
+### NoCacheEcrecover
+
+> Contract for benchmarking ecrecover precompile using foundry's forge tests, looping through `n` number of signatures. An event is emitted with the number of correct matches.
+
+### EcdsaOps
+
+> Contract includes looping through each signature and recovering each address from the message hash and signature using `ECDSA.recover` function. Finally, an event is emitted with the number of correct matches.
+
 ### Openzeppelin ECDSA recover (signature verification)
 
 | Number of signatures verified | Gas Usage | Gas Price (Eth) (15 Gwei) | USD (at 1500/eth) |
@@ -31,16 +39,6 @@ npx hardhat run scripts/deploy.ts
 npx hardhat test
 forge test
 ```
-
-## Contract details
-
-### NoCacheEcrecover
-
-> Contract for benchmarking ecrecover precompile using foundry's forge tests in `test/forge-test`. An event is emitted with the number of correct matches.
-
-### EcdsaOps
-
-> Contract includes looping through each signature and recovering each address from the message hash and signature using `ECDSA.recover` function. Finally, an event is emitted with the number of correct matches.
 
 
 
