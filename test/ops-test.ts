@@ -112,11 +112,11 @@ describe("ECDSAOpsTest", () => {
         .to.emit(opsContract, "Verify")
         .withArgs(NUMBER);
     });
-    it("should recover 4340 addresses from signature and msg", async () => {
+    it("should recover 4000 addresses from signature and msg", async () => {
       const opsContract = await loadFixture(opsFixture);
       const addresses = [];
       const signatures = [];
-      const NUMBER = 4340;
+      const NUMBER = 4000;
       console.log(NUMBER);
       for (let i = 0; i < NUMBER; i++) {
         // const signer = ethers.Wallet.createRandom();
@@ -141,11 +141,11 @@ describe("ECDSAOpsTest", () => {
       const result = await res.wait();
       console.log("gas", result.gasUsed.toString());
     });
-    it("should recover 4341 addresses from signature and msg", async () => {
+    it("should recover 4340 addresses from signature and msg", async () => {
       const opsContract = await loadFixture(opsFixture);
       const addresses = [];
       const signatures = [];
-      const NUMBER = 4341;
+      const NUMBER = 4340;
       console.log(NUMBER);
       for (let i = 0; i < NUMBER; i++) {
         addresses.push("0xC326701346c11BAD229f5A5D62861E438738B17b");
