@@ -112,11 +112,11 @@ describe("ECDSAOpsTest", () => {
         .to.emit(opsContract, "Verify")
         .withArgs(NUMBER);
     });
-    it("should recover 4000 addresses from signature and msg", async () => {
+    it("should recover 200 addresses from signature and msg", async () => {
       const opsContract = await loadFixture(opsFixture);
       const addresses = [];
       const signatures = [];
-      const NUMBER = 4000;
+      const NUMBER = 200;
       console.log(NUMBER);
       for (let i = 0; i < NUMBER; i++) {
         // const signer = ethers.Wallet.createRandom();
