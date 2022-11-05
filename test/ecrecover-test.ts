@@ -3,6 +3,8 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 
 describe("benchmark", () => {
+  const msg = "bridging is tough";
+
   async function opsFixture() {
     const Ecrecover = await ethers.getContractFactory("NoCacheEcrecover");
     const ecrecover = await Ecrecover.deploy();
@@ -10,20 +12,179 @@ describe("benchmark", () => {
   }
 
   describe("Ecrecover", () => {
-    it("should recover 8129 addresses from signature and msg", async () => {
+    it("should recover 1 address from signature and msg", async () => {
       const ecrecover = await loadFixture(opsFixture);
-      const NUMBER = 8129;
-      const hash =
-        "0x1db2807a7ef74eb2555abb27f4cbd68574a7f163b570a7fc016fd3b8a9a04a83";
-      const v = 28;
-      const r =
-        "0xbceab59162da5e511fb9c37fda207d443d05e438e5c843c57b2d5628580ce921";
-      const s =
-        "0x6ffa0335834d8bb63d86fb42a8dd4d18f41bc3a301546e2c47aa1041c3a18237";
-      const addr = "0x999471bB43B9C9789050386F90C1Ad63DCa89106";
-      await expect(ecrecover.benchmarkEcrecover(hash, v, r, s, addr, NUMBER))
-        .to.emit(ecrecover, "Verify")
-        .withArgs(NUMBER);
+      const signer = ethers.Wallet.createRandom();
+      const signature = await signer.signMessage(
+        ethers.utils.arrayify(
+          ethers.utils.keccak256(
+            ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+          )
+        )
+      );
+      const splitSig = ethers.utils.splitSignature(signature);
+      const sigData = [
+        { v: splitSig.v, r: splitSig.r, s: splitSig.s, addr: signer.address },
+      ];
+      const hash = ethers.utils.hashMessage(msg);
+      const response = await ecrecover.benchmarkEcrecover(hash, sigData, 1);
+      const result = await response.wait();
+      console.log(result);
+      console.log(result.gasUsed.toString());
+    });
+    it("should recover 20 addresses from signature and msg", async () => {
+      const ecrecover = await loadFixture(opsFixture);
+      const NUMBER = 20;
+      const sigData = [];
+      for (let i = 0; i < NUMBER; i++) {
+        const signer = ethers.Wallet.createRandom();
+        const signature = await signer.signMessage(
+          ethers.utils.arrayify(
+            ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+            )
+          )
+        );
+        const splitSig = ethers.utils.splitSignature(signature);
+        sigData.push({
+          v: splitSig.v,
+          r: splitSig.r,
+          s: splitSig.s,
+          addr: signer.address,
+        });
+      }
+      const hash = ethers.utils.hashMessage(msg);
+      const response = await ecrecover.benchmarkEcrecover(
+        hash,
+        sigData,
+        NUMBER
+      );
+      const result = await response.wait();
+      console.log(result.gasUsed.toString());
+    });
+    it("should recover 667 addresses from signature and msg", async () => {
+      const ecrecover = await loadFixture(opsFixture);
+      const NUMBER = 667;
+      const sigData = [];
+      for (let i = 0; i < NUMBER; i++) {
+        const signer = ethers.Wallet.createRandom();
+        const signature = await signer.signMessage(
+          ethers.utils.arrayify(
+            ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+            )
+          )
+        );
+        const splitSig = ethers.utils.splitSignature(signature);
+        sigData.push({
+          v: splitSig.v,
+          r: splitSig.r,
+          s: splitSig.s,
+          addr: signer.address,
+        });
+      }
+      const hash = ethers.utils.hashMessage(msg);
+      const response = await ecrecover.benchmarkEcrecover(
+        hash,
+        sigData,
+        NUMBER
+      );
+      const result = await response.wait();
+      console.log(result.gasUsed.toString());
+    });
+    it("should recover 2000 addresses from signature and msg", async () => {
+      const ecrecover = await loadFixture(opsFixture);
+      const NUMBER = 2000;
+      const sigData = [];
+      for (let i = 0; i < NUMBER; i++) {
+        const signer = ethers.Wallet.createRandom();
+        const signature = await signer.signMessage(
+          ethers.utils.arrayify(
+            ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+            )
+          )
+        );
+        const splitSig = ethers.utils.splitSignature(signature);
+        sigData.push({
+          v: splitSig.v,
+          r: splitSig.r,
+          s: splitSig.s,
+          addr: signer.address,
+        });
+      }
+      const hash = ethers.utils.hashMessage(msg);
+      const response = await ecrecover.benchmarkEcrecover(
+        hash,
+        sigData,
+        NUMBER
+      );
+      const result = await response.wait();
+      console.log(result.gasUsed.toString());
+    });
+    it("should recover 4000 addresses from signature and msg", async () => {
+      const ecrecover = await loadFixture(opsFixture);
+      const NUMBER = 2000;
+      const sigData = [];
+      for (let i = 0; i < NUMBER; i++) {
+        const signer = ethers.Wallet.createRandom();
+        const signature = await signer.signMessage(
+          ethers.utils.arrayify(
+            ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+            )
+          )
+        );
+        const splitSig = ethers.utils.splitSignature(signature);
+        sigData.push({
+          v: splitSig.v,
+          r: splitSig.r,
+          s: splitSig.s,
+          addr: signer.address,
+        });
+      }
+      const sigData2 = sigData;
+      sigData2.push(...sigData);
+      const hash = ethers.utils.hashMessage(msg);
+      const response = await ecrecover.benchmarkEcrecover(
+        hash,
+        sigData2,
+        NUMBER * 2
+      );
+      const result = await response.wait();
+      console.log(result.gasUsed.toString());
+    });
+    it("should recover 4700 addresses from signature and msg", async () => {
+      const ecrecover = await loadFixture(opsFixture);
+      const NUMBER = 2350;
+      const sigData = [];
+      for (let i = 0; i < NUMBER; i++) {
+        const signer = ethers.Wallet.createRandom();
+        const signature = await signer.signMessage(
+          ethers.utils.arrayify(
+            ethers.utils.keccak256(
+              ethers.utils.defaultAbiCoder.encode(["string"], [msg])
+            )
+          )
+        );
+        const splitSig = ethers.utils.splitSignature(signature);
+        sigData.push({
+          v: splitSig.v,
+          r: splitSig.r,
+          s: splitSig.s,
+          addr: signer.address,
+        });
+      }
+      const sigData2 = sigData;
+      sigData2.push(...sigData);
+      const hash = ethers.utils.hashMessage(msg);
+      const response = await ecrecover.benchmarkEcrecover(
+        hash,
+        sigData2,
+        NUMBER * 2
+      );
+      const result = await response.wait();
+      console.log(result.gasUsed.toString());
     });
   });
 });
