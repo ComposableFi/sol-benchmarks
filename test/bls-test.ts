@@ -1,0 +1,44 @@
+import { ethers } from "hardhat";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { expect } from "chai";
+
+describe("benchmark", () => {
+  async function blsFixture() {
+    const BLS = await ethers.getContractFactory("BLS");
+    const bls = await BLS.deploy();
+    return bls;
+  }
+
+  describe("BLS", () => {
+    it("should verify bls signature", async () => {
+      const bls = await loadFixture(blsFixture);
+      console.log(parseInt("0xabcd"));
+      const res = await bls.verifyHelpedAggregated(
+        [
+          [
+            4732500246076266494184282090774606989935310339956125703553588050065105269449,
+            17680088654892913246817622267030318133161076660043605649300612920347752169327,
+          ],
+          [
+            1655578660422496991839058780452835616766416333598975400769190111973908174329,
+            16334665185251989719101735311683947808779079810183866863232955457422711503726,
+          ],
+        ],
+        [
+          14178005680273297700635884606972956253020209975180923080212567002716174962641,
+          19525222298104009616876491016641859478269371167286197258132969779795797305743,
+          19027518723931341103073785465668576605740970714805850125609708850081760732489,
+          18057896816083435547450502703136613724962816380884002962302407485956668096709,
+        ],
+        "0xabcd",
+        [
+          6804144552764344418959845231470699534013438283199506455269959243065640516474,
+          18573269969639768122779348061540594442522455166686531364025732447737093670312,
+        ]
+      );
+      const result = await res.wait();
+      console.log(result);
+      console.log(result.gasUsed.toString());
+    });
+  });
+});
