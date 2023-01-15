@@ -11,7 +11,27 @@ contract BLSTest is Test {
         bls = new BLS();
     }
 
-    function testSampleCall() public {
+    function test1Signature() public {
+        callVerification(1);
+    }
+
+    function test2Signatures() public {
+        callVerification(2);
+    }
+
+    function test10Signatures() public {
+        callVerification(10);
+    }
+
+    function test50Signatures() public {
+        callVerification(100);
+    }
+
+    function test100Signatures() public {
+        callVerification(500);
+    }
+
+    function callVerification(uint256 iterations) public {
         uint256[2][2] memory points_g1 = [
             [
                 4732500246076266494184282090774606989935310339956125703553588050065105269449,
@@ -33,8 +53,6 @@ contract BLSTest is Test {
             6804144552764344418959845231470699534013438283199506455269959243065640516474,
             18573269969639768122779348061540594442522455166686531364025732447737093670312
         ];
-        // bls.verifyHelpedAggregated(points_g1, aggregated_g2, data, signature);
-        uint256 iterations = 2;
         bls.multiVerifier(
             points_g1,
             aggregated_g2,
