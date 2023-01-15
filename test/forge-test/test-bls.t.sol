@@ -28,19 +28,19 @@ contract BLSTest is Test {
             19027518723931341103073785465668576605740970714805850125609708850081760732489,
             18057896816083435547450502703136613724962816380884002962302407485956668096709
         ];
-        bytes memory data = toBytes(43981);
-        console.logBytes(data);
+        bytes memory data = hex"abcd";
         uint256[2] memory signature = [
             6804144552764344418959845231470699534013438283199506455269959243065640516474,
             18573269969639768122779348061540594442522455166686531364025732447737093670312
         ];
-        bls.verifyHelpedAggregated(points_g1, aggregated_g2, data, signature);
-    }
-
-    function toBytes(uint256 x) public returns (bytes memory b) {
-        b = new bytes(32);
-        for (uint256 i = 0; i < 32; i++) {
-            b[i] = bytes1(uint8(x / (2**(8 * (31 - i)))));
-        }
+        // bls.verifyHelpedAggregated(points_g1, aggregated_g2, data, signature);
+        uint256 iterations = 2;
+        bls.multiVerifier(
+            points_g1,
+            aggregated_g2,
+            data,
+            signature,
+            iterations
+        );
     }
 }

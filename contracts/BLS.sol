@@ -565,6 +565,18 @@ contract BLS {
         require(success);
     }
 
+    function multiVerifier(
+        uint256[2][2] memory points_g1,
+        uint256[4] memory aggregated_g2,
+        bytes memory data,
+        uint256[2] memory signature,
+        uint256 iterations
+    ) public {
+        for (uint256 i = 0; i < iterations; i++) {
+            verifyHelpedAggregated(points_g1, aggregated_g2, data, signature);
+        }
+    }
+
     function verifyHelpedAggregated(
         uint256[2][2] memory points_g1,
         uint256[4] memory aggregated_g2,
