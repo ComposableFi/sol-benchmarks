@@ -566,7 +566,7 @@ contract BLS {
     }
 
     function verifyHelpedAggregated(
-        uint256[2][100] memory points_g1,
+        uint256[2][200] memory points_g1,
         uint256[4] memory aggregated_g2,
         bytes memory data,
         uint256[2] memory signature
@@ -577,7 +577,7 @@ contract BLS {
             "verification failed"
         );
         uint256[2] memory aggregated_p1 = addPoints(points_g1[0], points_g1[1]);
-        for (uint256 i = 2; i < 100; i++) {
+        for (uint256 i = 2; i < 200; i++) {
             aggregated_p1 = addPoints(aggregated_p1, points_g1[i]);
         }
 
