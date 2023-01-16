@@ -565,20 +565,8 @@ contract BLS {
         require(success);
     }
 
-    function multiVerifier(
-        uint256[2][5] memory points_g1,
-        uint256[4] memory aggregated_g2,
-        bytes memory data,
-        uint256[2] memory signature,
-        uint256 iterations
-    ) public {
-        for (uint256 i = 0; i < iterations; i++) {
-            verifyHelpedAggregated(points_g1, aggregated_g2, data, signature);
-        }
-    }
-
     function verifyHelpedAggregated(
-        uint256[2][5] memory points_g1,
+        uint256[2][100] memory points_g1,
         uint256[4] memory aggregated_g2,
         bytes memory data,
         uint256[2] memory signature
@@ -589,9 +577,9 @@ contract BLS {
             "verification failed"
         );
         uint256[2] memory aggregated_p1 = addPoints(points_g1[0], points_g1[1]);
-        aggregated_p1 = addPoints(aggregated_p1, points_g1[2]);
-        aggregated_p1 = addPoints(aggregated_p1, points_g1[3]);
-        aggregated_p1 = addPoints(aggregated_p1, points_g1[4]);
+        for (uint256 i = 2; i < 100; i++) {
+            aggregated_p1 = addPoints(aggregated_p1, points_g1[i]);
+        }
 
         emit Debug(gasleft(), 0, 0, 0);
         uint256 alpha = uint256(
