@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import {console} from "forge-std/console.sol";
+
+import "../../contracts/BN256G2.sol";
+
 contract BLS {
     // Field order
-    uint256 constant N =
+    uint256 constant  N =
         21888242871839275222246405745257275088696311157297823662689037894645226208583;
 
     // Negated genarator of G2
@@ -23,6 +27,34 @@ contract BLS {
     uint256 constant ODD_NUM =
         0x8000000000000000000000000000000000000000000000000000000000000000;
 
+    function verifySinglePK(
+        uint256[2] memory signature,
+        PublicKey memory pubkey,
+        uint256[2] memory message
+    ) public view returns (bool) {
+        uint256[12] memory input = [
+            signature[0],
+            signature[1],
+            nG2x1,
+            nG2x0,
+            nG2y1,
+            nG2y0,
+            message[0],
+            message[1],
+            pubkey.y_real,
+            pubkey.x_real,
+            pubkey.y_imaginary,
+            pubkey.x_imaginary
+        ];
+        uint256[1] memory out;
+        bool success;
+        // solium-disable-next-line security/no-inline-assembly
+        assembly {
+            success := staticcall(sub(gas(), 2000), 8, input, 384, out, 0x20)
+        }
+        require(success, "Could not verify");
+        return out[0] != 0;
+    }
     function verifySingle(
         uint256[2] memory signature,
         uint256[4] memory pubkey,
@@ -47,12 +79,8 @@ contract BLS {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := staticcall(sub(gas(), 2000), 8, input, 384, out, 0x20)
-            switch success
-            case 0 {
-                invalid()
-            }
         }
-        require(success, "");
+        require(success, "Could not verify");
         return out[0] != 0;
     }
 
@@ -95,17 +123,13 @@ contract BLS {
                 out,
                 0x20
             )
-            switch success
-            case 0 {
-                invalid()
-            }
         }
-        require(success, "");
+        require(success, "Could not verify");
         return out[0] != 0;
     }
 
     function hashToPoint(bytes memory data)
-        internal
+        public
         view
         returns (uint256[2] memory p)
     {
@@ -546,7 +570,7 @@ contract BLS {
         assembly {
             success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)
         }
-        require(success);
+        require(success, "Failed to add points");
     }
 
     function mulPoint(uint256[2] memory p, uint256 s)
@@ -565,6 +589,91 @@ contract BLS {
         require(success);
     }
 
+    struct PublicKey {
+      uint256 x_real;
+      uint256 y_real;
+      uint256 x_imaginary;
+      uint256 y_imaginary;
+    }
+
+    function addKey(PublicKey memory a, PublicKey memory b) public view returns (uint256, uint256, uint256, uint256) {
+        return BN256G2.ecTwistAdd(a.x_real, a.y_real, a.x_imaginary, a.y_imaginary, b.x_real, b.y_real, b.x_imaginary, b.y_imaginary);
+    }
+
+    function verifyAggregated(
+        PublicKey[] memory pubkeys,
+        uint256[2] memory aggregated_signature,
+        bytes memory data
+    ) public {
+        uint256[2] memory hash = hashToPoint(data);
+
+        PublicKey memory aggregated_pubkey = pubkeys[0];
+        for (uint256 i = 1; i < pubkeys.length; i++) {
+            (uint256 x_real, uint256 y_real, uint256 x_imaginary, uint256 y_imaginary) = addKey(aggregated_pubkey, pubkeys[i]);
+            aggregated_pubkey.x_real = x_real;
+            aggregated_pubkey.y_real = y_real;
+            aggregated_pubkey.x_imaginary = x_imaginary;
+            aggregated_pubkey.y_imaginary = y_imaginary;
+        }
+
+        require(
+            verifySingle(aggregated_signature, [aggregated_pubkey.x_real, aggregated_pubkey.y_real, aggregated_pubkey.x_imaginary, aggregated_pubkey.y_imaginary], hash),
+            "Verification failed"
+        );
+    }
+
+    function verifyOptimizedAggregated(
+        uint256[2][] memory pubkeys_g1,
+        PublicKey memory aggregated_g2,
+        uint256[2] memory signature,
+        bytes memory data
+    ) public {
+        unchecked {
+        uint256[2] memory hash = hashToPoint(data);
+        require(
+            verifySinglePK(signature, aggregated_g2, hash),
+            "verification failed 1"
+        );
+        uint256[2] memory aggregated_g1 = addPoints(pubkeys_g1[0], pubkeys_g1[1]);
+          for (uint256 i = 2; i < pubkeys_g1.length; i++) {
+            aggregated_g1 = addPoints(aggregated_g1, pubkeys_g1[i]);
+          }
+        uint256 alpha = uint256(
+            keccak256(
+                abi.encodePacked(
+                    data,
+                    signature[0],
+                    signature[1],
+                    aggregated_g2.x_real,
+                    aggregated_g2.y_real,
+                    aggregated_g2.x_imaginary,
+                    aggregated_g2.y_imaginary,
+                    aggregated_g1[0],
+                    aggregated_g1[1]
+                )
+            )
+        );
+        // alpha*P1
+        uint256[2] memory scaled_g1 = mulPoint(aggregated_g1, alpha);
+        // alpha*H
+        uint256[2] memory scaled_g1_generator = mulPoint(
+            [
+                7875458235035678754887153468411793526875066621955642619646139314277366414792,
+                8106623690154677659962327366078301943507317780154727084061147098569974335996
+            ],
+            alpha
+        );
+        // sigma + alpha*P1
+        uint256[2] memory g1_part_sig = addPoints(signature, scaled_g1);
+        // H(m) + alpha*H
+        uint256[2] memory g1_part_hash = addPoints(hash, scaled_g1_generator);
+        require(
+            verifySinglePK(g1_part_sig, aggregated_g2, g1_part_hash),
+            "verification failed 2"
+        );
+        }
+    }
+
     function verifyHelpedAggregated(
         uint256[2][200] memory points_g1,
         uint256[4] memory aggregated_g2,
@@ -572,6 +681,7 @@ contract BLS {
         uint256[2] memory signature
     ) public {
         uint256[2] memory hash = hashToPoint(data);
+        console.log("Hash");
         require(
             verifySingle(signature, aggregated_g2, hash),
             "verification failed"
