@@ -185,6 +185,6 @@ describe("benchmark", () => {
       );
       const result = await response.wait();
       console.log(result.gasUsed.toString());
-    });
+    }).timeout(50000);
   });
 });

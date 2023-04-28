@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 
 import {console} from "forge-std/console.sol";
 
-import "../../contracts/BN256G2.sol";
+import "./BN256G2.sol";
 
 contract BLS {
     // Field order
