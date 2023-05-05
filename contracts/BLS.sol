@@ -606,6 +606,9 @@ contract BLS {
         bytes memory data
     ) public {
         uint256[2] memory hash = hashToPoint(data);
+        // console.log("Message hash point:");
+        // console.log(hash[0]);
+        // console.log(hash[1]);
 
         PublicKey memory aggregated_pubkey = pubkeys[0];
         for (uint256 i = 1; i < pubkeys.length; i++) {
@@ -615,7 +618,7 @@ contract BLS {
             aggregated_pubkey.x_imaginary = x_imaginary;
             aggregated_pubkey.y_imaginary = y_imaginary;
         }
-
+    
         require(
             verifySingle(aggregated_signature, [aggregated_pubkey.x_real, aggregated_pubkey.y_real, aggregated_pubkey.x_imaginary, aggregated_pubkey.y_imaginary], hash),
             "Verification failed"
