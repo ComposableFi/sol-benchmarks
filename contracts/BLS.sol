@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 
 import {console} from "forge-std/console.sol";
 
-import "../../contracts/BN256G2.sol";
+import "./BN256G2.sol";
 
 contract BLS {
     // Field order
@@ -615,7 +615,23 @@ contract BLS {
             aggregated_pubkey.x_imaginary = x_imaginary;
             aggregated_pubkey.y_imaginary = y_imaginary;
         }
+        
+        require(
+            verifySingle(aggregated_signature, [aggregated_pubkey.x_real, aggregated_pubkey.y_real, aggregated_pubkey.x_imaginary, aggregated_pubkey.y_imaginary], hash),
+            "Verification failed"
+        );
+    }
 
+    function verifyAggregatedIsolated(
+        PublicKey memory aggregated_pubkey,
+        uint256[2] memory aggregated_signature,
+        uint256[2] memory hash
+    ) public {
+        
+        // console.log("Message hash point:");
+        // console.log(hash[0]);
+        // console.log(hash[1]);
+        
         require(
             verifySingle(aggregated_signature, [aggregated_pubkey.x_real, aggregated_pubkey.y_real, aggregated_pubkey.x_imaginary, aggregated_pubkey.y_imaginary], hash),
             "Verification failed"
